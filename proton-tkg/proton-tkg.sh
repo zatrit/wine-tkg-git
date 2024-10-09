@@ -944,7 +944,8 @@ else
     git reset --hard HEAD
     git clean -xdf
     git pull origin master
-    cp -rv "$_nowhere/umu-protonfixes/"* "$_nowhere/proton_template/share/protonfixes"/
+    git submodule update --init --recursive
+    cp -rv "$_nowhere/umu-protonfixes/"* "$_nowhere/proton_template/conf/protonfixes"/
     cd "$_nowhere"
 
     if [ "$_NUKR" != "debug" ]; then
@@ -1151,6 +1152,9 @@ else
       rm -f "proton_tkg_$_protontkg_version"/toolmanifest.vdf && cp "$_nowhere"/Proton/toolmanifest_noruntime.vdf "proton_tkg_$_protontkg_version"/toolmanifest.vdf
     fi
 
+    # Inject umu-protonfixes
+    cp -r "$_nowhere"/proton_template/conf/protonfixes "proton_tkg_$_protontkg_version"
+
     # steampipe fixups
     cp "$_nowhere"/proton_template/steampipe_fixups.py "$_nowhere"/"proton_tkg_$_protontkg_version"/
 
@@ -1216,8 +1220,6 @@ else
       patch -Np1 < "$_nowhere/proton_template/$_patchname" || exit 1
       cd "$_nowhere"
     fi
-
-
 
     rm -f "$_nowhere/proton_tkg_$_protontkg_version/proton.orig"
 

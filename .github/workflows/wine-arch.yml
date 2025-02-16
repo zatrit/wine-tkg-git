@@ -2,7 +2,7 @@ name: Wine Arch Linux CI
 
 on:
   schedule:
-    - cron:  '45 8,20 * * *'
+    - cron:  '45 8 1,15 * *'
   workflow_dispatch:
 
 jobs:
@@ -18,9 +18,9 @@ jobs:
         run: |
           echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           pacman -Syu --noconfirm base-devel sudo
+          curl -o /usr/include/linux/ntsync.h https://raw.githubusercontent.com/torvalds/linux/v6.14-rc2/include/uapi/linux/ntsync.h
           useradd user -G wheel && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
           chown user -R . && cd wine-tkg-git
-          sed -i 's/wayland_driver="false"/wayland_driver="true"/' customization.cfg
           su user -c "yes|PKGDEST=/tmp/wine-tkg makepkg --noconfirm -s"
 
       - name: Archive the artifacts
